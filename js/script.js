@@ -1,7 +1,63 @@
 'use strict';
 
 var ViewModel = function () {
+    var self = this;
 
+    self.locations = ko.observableArray([{
+            title: 'BFC Brasil',
+            location: {
+                lat: -15.758548,
+                lng: -47.887668
+            } 
+        },
+        {
+            title: 'Ernesto Cafés Especiais',
+            location: {
+                lat: -15.830661,
+                lng: -47.924217
+            }
+        },
+        {
+            title: 'L\'amour du Pain',
+            location: {
+                lat: -15.831072,
+                lng: -47.924081
+            }
+        },
+        {
+            title: 'Mormaii Surf Bar',
+            location: {
+                lat: -15.819287,
+                lng: -47.833534
+            }
+        },
+        {
+            title: 'Clandestino Café e Música',
+            location: {
+                lat: -15.747085,
+                lng: -47.883648
+            }
+        },
+        {
+            title: 'Grenat Cafés Especiais',
+            location: {
+                lat: -15.720788,
+                lng: -47.886431
+            }
+        },
+        {
+            title: 'Objeto Encontrado',
+            location: {
+                lat: -15.783208,
+                lng: -47.8829
+            } 
+        }
+    ]);
+
+    this.onClickLocation = function(clickedLocation) {
+        google.maps.event.trigger(map.mapMarkers[clickedLocation.index()], 'click');
+    };
+    
 }
 ko.applyBindings(new ViewModel());
 
@@ -184,7 +240,6 @@ function initMap() {
         // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', function () {
             populateInfoWindow(this, largeInfowindow);
-            animateWobble();
         });
 
         // Two event listeners - one for mouseover, one for mouseout,
