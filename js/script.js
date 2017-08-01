@@ -1,5 +1,10 @@
 'use strict';
 
+var ViewModel = function () {
+
+}
+ko.applyBindings(new ViewModel());
+
 var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
@@ -261,29 +266,4 @@ function makeMarkerIcon(markerColor) {
         new google.maps.Point(10, 34),
         new google.maps.Size(21, 34));
     return markerImage;
-}
-
-function animateWobble() {
-    dynamics.stop(this.pinWrap);
-    dynamics.css(this.pinWrap, {
-        'transform': 'none',
-    });
-    dynamics.animate(this.pinWrap, {
-        rotateZ: -45,
-    }, {
-        type: dynamics.bounce,
-        duration: 1800,
-    });
-
-    dynamics.stop(this.pin);
-    dynamics.css(this.pin, {
-        'transform': 'none',
-    });
-    dynamics.animate(this.pin, {
-        scaleX: 0.8
-    }, {
-        type: dynamics.bounce,
-        duration: 800,
-        bounciness: 1800,
-    });
 }
