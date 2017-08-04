@@ -12,11 +12,13 @@
       <div class="options-box">
         <h1>Pet Friendly Places in Brasília, Brazil</h1>
         <hr>
-        <ul data-bind="foreach: currentLocation().locations">
-          <li data-bind="click: $parent.onClickLocation">
-            <a data-bind="text: title"></a>
-          </li>
-        </ul>
+        <div data-bind="with: currentLocation()">
+          <ul data-bind="foreach: locations">
+            <li data-bind="click: $parent.onClickLocation">
+              <a data-bind="text: title"></a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div id="map"></div>
     </div>
