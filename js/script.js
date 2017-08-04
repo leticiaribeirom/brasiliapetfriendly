@@ -1,9 +1,7 @@
 'use strict';
 
-var ViewModel = function () {
-    var self = this;
-
-    self.locations = ko.observableArray([{
+var Locations = function () {
+    this.locations = ko.observableArray([{
             title: 'BFC Brasil',
             location: {
                 lat: -15.758548,
@@ -53,7 +51,12 @@ var ViewModel = function () {
             } 
         }
     ]);
+}
 
+var ViewModel = function () {
+    var self = this;
+    this.currentLocation = ko.observable(new Locations());
+    
     this.onClickLocation = function(clickedLocation) {
         google.maps.event.trigger(map.mapMarkers[clickedLocation.index()], 'click');
     };
