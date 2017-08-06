@@ -3,6 +3,7 @@
 var Locations = function () {
     this.locations = ko.observableArray([{
             title: 'BFC Brasil',
+            index: 1,
             location: {
                 lat: -15.758548,
                 lng: -47.887668
@@ -10,6 +11,7 @@ var Locations = function () {
         },
         {
             title: 'Ernesto Cafés Especiais',
+            index: 2,
             location: {
                 lat: -15.830661,
                 lng: -47.924217
@@ -17,6 +19,7 @@ var Locations = function () {
         },
         {
             title: 'L\'amour du Pain',
+            index: 3,
             location: {
                 lat: -15.831072,
                 lng: -47.924081
@@ -24,6 +27,7 @@ var Locations = function () {
         },
         {
             title: 'Mormaii Surf Bar',
+            index: 4,
             location: {
                 lat: -15.819287,
                 lng: -47.833534
@@ -31,6 +35,7 @@ var Locations = function () {
         },
         {
             title: 'Clandestino Café e Música',
+            index: 5,
             location: {
                 lat: -15.747085,
                 lng: -47.883648
@@ -38,6 +43,7 @@ var Locations = function () {
         },
         {
             title: 'Grenat Cafés Especiais',
+            index: 6,
             location: {
                 lat: -15.720788,
                 lng: -47.886431
@@ -45,6 +51,7 @@ var Locations = function () {
         },
         {
             title: 'Objeto Encontrado',
+            index: 7,
             location: {
                 lat: -15.783208,
                 lng: -47.8829
@@ -55,10 +62,14 @@ var Locations = function () {
 
 var ViewModel = function () {
     var self = this;
+
+    this.getIndex = function() {
+        return this.index;
+    }
     this.currentLocation = ko.observable(new Locations());
     
-    this.onClickLocation = function(clickedLocation) {
-        google.maps.event.trigger(map.mapMarkers[clickedLocation.index()], 'click');
+    this.setLocation = function(clickedLocation) {
+        google.maps.event.trigger(map.mapMarkers[clickedLocation.getIndex()], 'click');
     };
     
 }

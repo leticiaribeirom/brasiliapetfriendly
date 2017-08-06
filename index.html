@@ -14,7 +14,7 @@
         <hr>
         <div data-bind="with: currentLocation()">
           <ul data-bind="foreach: locations">
-            <li data-bind="click: $parent.onClickLocation">
+            <li data-bind="click: $root.setLocation">
               <a data-bind="text: title"></a>
             </li>
           </ul>
