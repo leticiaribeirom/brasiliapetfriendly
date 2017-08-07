@@ -12,8 +12,12 @@
       <div class="options-box">
         <h1>Pet Friendly Places in Brasília, Brazil</h1>
         <hr>
+        <label for="search-input">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </label>
+        <input id="search-input" type="filter" data-bind="textInput: filter" autocomplete="off">
         <div data-bind="with: currentLocation()">
-          <ul data-bind="foreach: locations">
+          <ul data-bind="foreach: $root.filterPlaces">
             <li data-bind="click: $root.setLocation">
               <a data-bind="text: title"></a>
             </li>
@@ -22,8 +26,9 @@
       </div>
       <div id="map"></div>
     </div>
-    
-    <script async src="js/dynamics.min.js"></script>
+
+    <script src="https://use.fontawesome.com/6d06bdb0ed.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src='js/knockout-3.4.2.js'></script>
     <script async defer
         src=

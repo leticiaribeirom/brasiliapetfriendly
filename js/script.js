@@ -1,13 +1,13 @@
 'use strict';
 
-var Locations = function () {
+var LocationsModel = function () {
     this.locations = ko.observableArray([{
             title: 'BFC Brasil',
             index: 1,
             location: {
                 lat: -15.758548,
                 lng: -47.887668
-            } 
+            }
         },
         {
             title: 'Ernesto Cafés Especiais',
@@ -55,24 +55,34 @@ var Locations = function () {
             location: {
                 lat: -15.783208,
                 lng: -47.8829
-            } 
+            }
         }
     ]);
+
 }
 
 var ViewModel = function () {
     var self = this;
 
-    this.getIndex = function() {
+    this.getIndex = function () {
         return this.index;
     }
-    this.currentLocation = ko.observable(new Locations());
-    
-    this.setLocation = function(clickedLocation) {
+    this.currentLocation = ko.observable(new LocationsModel());
+
+    this.setLocation = function (clickedLocation) {
         google.maps.event.trigger(map.mapMarkers[clickedLocation.getIndex()], 'click');
     };
-    
+    this.filter = ko.observable('');
+
+    this.filterPlaces = ko.computed(function () {
+        return this.currentLocation().locations().filter(function (location) {
+            if (!self.filter() || location.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1)
+                return location;
+        });
+    }, this);
+
 }
+
 ko.applyBindings(new ViewModel());
 
 var map;
@@ -82,93 +92,93 @@ var markers = [];
 function initMap() {
     // Create a styles array to use with the map.
     var styles = [{
-          "featureType": "water",
-          "elementType": "geometry",
-          "stylers": [{
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [{
             "color": "#3f3f43"
-          }]
-        }, {
-          "featureType": "landscape",
-          "elementType": "geometry",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "landscape",
+        "elementType": "geometry",
+        "stylers": [{
             "color": "#8bcc99"
-          }]
-        }, {
-          "featureType": "poi",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "poi",
+        "stylers": [{
             "color": "#8bcc99"
-          }, {
+        }, {
             "lightness": -7
-          }]
-        }, {
-          "featureType": "road.highway",
-          "elementType": "geometry",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "geometry",
+        "stylers": [{
             "color": "#8bcc99"
-          }, {
+        }, {
             "lightness": -28
-          }]
-        }, {
-          "featureType": "road.arterial",
-          "elementType": "geometry",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [{
             "color": "#8bcc99"
-          }, {
+        }, {
             "visibility": "on"
-          }, {
+        }, {
             "lightness": -15
-          }]
-        }, {
-          "featureType": "road.local",
-          "elementType": "geometry",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "road.local",
+        "elementType": "geometry",
+        "stylers": [{
             "color": "#8bcc99"
-          }, {
+        }, {
             "lightness": -18
-          }]
-        }, {
-          "elementType": "labels.text.fill",
-          "stylers": [{
+        }]
+    }, {
+        "elementType": "labels.text.fill",
+        "stylers": [{
             "color": "#ffffff"
-          }]
-        }, {
-          "elementType": "labels.text.stroke",
-          "stylers": [{
+        }]
+    }, {
+        "elementType": "labels.text.stroke",
+        "stylers": [{
             "visibility": "off"
-          }]
-        }, {
-          "featureType": "transit",
-          "elementType": "geometry",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "transit",
+        "elementType": "geometry",
+        "stylers": [{
             "color": "#8bcc99"
-          }, {
+        }, {
             "lightness": -34
-          }]
-        }, {
-          "featureType": "administrative",
-          "elementType": "geometry",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "administrative",
+        "elementType": "geometry",
+        "stylers": [{
             "visibility": "on"
-          }, {
+        }, {
             "color": "#333739"
-          }, {
+        }, {
             "weight": 0.8
-          }]
-        }, {
-          "featureType": "poi.park",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "poi.park",
+        "stylers": [{
             "color": "#2ecc71"
-          }]
-        }, {
-          "featureType": "road",
-          "elementType": "geometry.stroke",
-          "stylers": [{
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "geometry.stroke",
+        "stylers": [{
             "color": "#333739"
-          }, {
+        }, {
             "weight": 0.3
-          }, {
+        }, {
             "lightness": 10
-          }]
+        }]
     }];
     // Constructor creates a new map - only center and zoom are required.
     map = new google.maps.Map(document.getElementById('map'), {
@@ -185,7 +195,7 @@ function initMap() {
             location: {
                 lat: -15.758548,
                 lng: -47.887668
-            } 
+            }
         },
         {
             title: 'Ernesto Cafés Especiais',
@@ -227,7 +237,7 @@ function initMap() {
             location: {
                 lat: -15.783208,
                 lng: -47.8829
-            } 
+            }
         }
     ];
     var largeInfowindow = new google.maps.InfoWindow();
