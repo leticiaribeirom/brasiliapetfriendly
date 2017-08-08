@@ -70,7 +70,7 @@ var ViewModel = function () {
     this.currentLocation = ko.observable(new LocationsModel());
 
     this.setLocation = function (clickedLocation) {
-        google.maps.event.trigger(map.mapMarkers[clickedLocation.getIndex()], 'click');
+        google.maps.event.trigger(markers[clickedLocation.index], 'click');
     };
     this.filter = ko.observable('');
 
@@ -190,56 +190,6 @@ function initMap() {
         styles: styles,
         mapTypeControl: false
     });
-    var locations = [{
-            title: 'BFC Brasil',
-            location: {
-                lat: -15.758548,
-                lng: -47.887668
-            }
-        },
-        {
-            title: 'Ernesto Cafés Especiais',
-            location: {
-                lat: -15.830661,
-                lng: -47.924217
-            }
-        },
-        {
-            title: 'L\'amour du Pain',
-            location: {
-                lat: -15.831072,
-                lng: -47.924081
-            }
-        },
-        {
-            title: 'Mormaii Surf Bar',
-            location: {
-                lat: -15.819287,
-                lng: -47.833534
-            }
-        },
-        {
-            title: 'Clandestino Café e Música',
-            location: {
-                lat: -15.747085,
-                lng: -47.883648
-            }
-        },
-        {
-            title: 'Grenat Cafés Especiais',
-            location: {
-                lat: -15.720788,
-                lng: -47.886431
-            }
-        },
-        {
-            title: 'Objeto Encontrado',
-            location: {
-                lat: -15.783208,
-                lng: -47.8829
-            }
-        }
-    ];
     var largeInfowindow = new google.maps.InfoWindow();
     // Style the markers a bit. This will be our listing marker icon.
     var defaultIcon = makeMarkerIcon('525454');
@@ -247,23 +197,23 @@ function initMap() {
     // mouses over the marker.
     var highlightedIcon = makeMarkerIcon('8bcc99');
     // The following group uses the location array to create an array of markers on initialize.
-    for (var i = 0; i < locations.length; i++) {
+    var markerLocation = new LocationsModel();
+    for (var i = 0; i < markerLocation.locations().length; i++) {
         // Get the position from the location array.
-        var position = locations[i].location;
-        var title = locations[i].title;
+        var position = markerLocation.locations()[i].location;
+        var title = markerLocation.locations()[i].title;
         // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
             position: position,
             title: title,
-            animation: google.maps.Animation.DROP,
             icon: defaultIcon,
             id: i
         });
-        // Push the marker to our array of markers.
-        markers.push(marker);
         // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', function () {
             populateInfoWindow(this, largeInfowindow);
+            this.setAnimation(google.maps.Animation.BOUNCE);
+            stopAnimation(this);
         });
 
         // Two event listeners - one for mouseover, one for mouseout,
@@ -274,8 +224,16 @@ function initMap() {
         marker.addListener('mouseout', function () {
             this.setIcon(defaultIcon);
         });
+
+        markers.push(marker);
     }
     showListings();
+}
+
+function stopAnimation(marker) {
+    setTimeout(function () {
+        marker.setAnimation(null);
+    }, 700);
 }
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
