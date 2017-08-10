@@ -1,5 +1,12 @@
 'use strict';
 
+var CLIENT_ID = 'OR2AOSJBF1TWD1XGBXKVJ5Y4E25JG4LMF12YM3NQYQ44EQZ0';
+var CLIENT_SECRET = 'YALRHHXRLZAUMAUV0O30NRSKKPMR20GWL0RO5OXGIXWSDNNA';
+
+var foursquareConfig = {
+    apiUrl: 'https://api.foursquare.com/v2/venues/'
+};
+
 var LocationsModel = function () {
     this.locations = ko.observableArray([{
             title: 'BFC Brasil',
@@ -276,10 +283,27 @@ function populateInfoWindow(marker, infowindow) {
         // Use streetview service to get the closest streetview image within
         // 50 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-        // Open the infowindow on the correct marker.
-        infowindow.open(map, marker);
-    }
+
+        var foursquareVenueUrl = foursquareConfig.apiUrl + 'search?ll=' + marker.getPosition().lat() + ',' + marker.getPosition().lng() + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET;
+        var foursquareVenueRequestTimeout = setTimeout(function () {
+            infowindow.setContent('<div>' + marker.title + '</div>' +
+                    '<div>No Foursquare Venue Found</div>');
+        }, 8000);
+
+        $.ajax({
+            url: foursquareVenueUrl,
+            success: function (response) {
+                console.log(response);
+                clearTimeout(foursquareVenueRequestTimeout);
+            }
+        });
+
+        return false;
+    };
+    // Open the infowindow on the correct marker.
+    infowindow.open(map, marker);
 }
+
 // This function will loop through the markers array and display them all.
 function showListings() {
     var bounds = new google.maps.LatLngBounds();
