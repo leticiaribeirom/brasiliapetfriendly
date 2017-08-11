@@ -284,7 +284,8 @@ function populateInfoWindow(marker, infowindow) {
         // 50 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 
-        var foursquareVenueUrl = foursquareConfig.apiUrl + 'search?ll=' + marker.getPosition().lat() + ',' + marker.getPosition().lng() + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET;
+        var foursquareVenueUrl = foursquareConfig.apiUrl + 'search?ll=' + marker.getPosition().lat() + ',' 
+        + marker.getPosition().lng() + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20170101&m=foursquare';
         var foursquareVenueRequestTimeout = setTimeout(function () {
             infowindow.setContent('<div>' + marker.title + '</div>' +
                     '<div>No Foursquare Venue Found</div>');
@@ -293,8 +294,13 @@ function populateInfoWindow(marker, infowindow) {
         $.ajax({
             url: foursquareVenueUrl,
             success: function (response) {
-                console.log(response);
+                console.log('hi');
+                var venueId = response.venues[0].id;
+                var venueAddress = response.venues[0].location.address;
                 clearTimeout(foursquareVenueRequestTimeout);
+            },
+            error: function(response) {
+                console.log('erro');
             }
         });
 
