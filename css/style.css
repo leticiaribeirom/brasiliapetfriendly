@@ -3,20 +3,92 @@ body {
     width: 100vw;
     height: 100vh;
     font-family: "Montserrat", sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     margin: 0;
     padding: 0;
 }
+
+.menu {
+    transition: 0.1s transform linear;
+    position: relative;
+    background: 0;
+    float: left;
+    margin: 2rem;
+    height: 2.7rem;
+    width: 2.5rem;
+    z-index: 1;
+    outline: 0;
+    padding: 0;
+    border: 0;
+}
+
+.bar,
+.bar::before,
+.bar::after {
+    transition: 0.2s background linear 0.1s, 0.2s top linear 0.2s, 0.2s transform linear;
+    position: absolute;
+    background: #525454;
+    margin: auto;
+    width: 100%;
+    height: 0.3rem;
+    content: '';
+    top: 50%;
+    left: 0;
+}
+
+.bar {
+    margin-top: -0.2rem;
+}
+
+.bar::before {
+    top: -1.2rem;
+}
+
+.bar::after {
+    top: 1.2rem;
+}
+
+.bar::before,
+.bar::after {
+    transform: rotate(0deg);
+}
+
+.active .bar {
+    background: 0;
+}
+
+.active .bar::before {
+    transform: rotate(45deg);
+}
+
+.active .bar::after {
+    transform: rotate(-45deg);
+}
+
+.active .bar::before,
+.active .bar::after {
+    top: 0;
+}
+
+.active .bar,
+.active .bar::before,
+.active .bar::after {
+    transition: 0.2s background linear 0.1s, 0.2s top linear, 0.2s transform linear 0.2s;
+}
+
 li {
     list-style: none;
 }
+
 .container {
     height: 100%;
     position: relative;
 }
+
 input {
     font-size: 12px;
 }
+
 #search-input {
     width: 90%;
 }
@@ -24,29 +96,34 @@ input {
 .filter {
     margin-right: 10px;
 }
+
 h1 {
     color: #525454;
     font-size: 22px;
     margin: 0 0 10px 0;
     text-align: center;
 }
+
 #hide-listings,
 #show-listings {
     width: 48%;
 }
+
 hr {
     background: #D0D7D9;
     height: 1px;
     margin: 20px 0 20px 0;
     border: none;
 }
+
 #map {
-    bottom:0px;
+    bottom: 0px;
     height: 100%;
-    left: 362px;
+    width: 100%;
     position: absolute;
     right: 0px;
 }
+
 .options-box {
     background: #fff;
     border-radius: 3px;
@@ -55,18 +132,29 @@ hr {
     padding: 10px 10px 0px 10px;
     text-align: left;
     width: 340px;
+    transform: translateX(-500px);
+    transition: transform 0.6s cubic-bezier(0.56, 0.1, 0.34, 0.91);
+}
+.menu-open .options-box {
+  transform: translateX(0);
+}
+.menu-open #map {
+    left: 355px;
 }
 .text {
     font-size: 12px;
 }
+
 .marker-title {
     font-size: 18px;
     font-weight: bold;
 }
+
 #address {
     font-style: oblique;
     margin-bottom: 10px;
 }
+
 #tips {
-    margin : 3px;
+    margin: 3px;
 }
