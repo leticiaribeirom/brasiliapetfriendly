@@ -56,10 +56,17 @@ hr {
     text-align: left;
     width: 340px;
 }
-#pano {
-    width: 200px;
-    height: 200px;
-}
 .text {
     font-size: 12px;
+}
+.marker-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+#address {
+    font-style: oblique;
+    margin-bottom: 10px;
+}
+#tips {
+    margin : 3px;
 }

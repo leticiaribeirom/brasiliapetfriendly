@@ -7,6 +7,8 @@ var foursquareConfig = {
     apiUrl: 'https://api.foursquare.com/v2/venues/'
 };
 
+var isFoursquareReady = false;
+
 var LocationsModel = function () {
     this.locations = ko.observableArray([{
             title: 'BFC Brasil',
@@ -93,11 +95,11 @@ var ViewModel = function () {
 ko.applyBindings(new ViewModel());
 
 var map;
-// Create a new blank array for all the listing markers.
+// Creates a new blank array for all the listing markers.
 var markers = [];
 
 function initMap() {
-    // Create a styles array to use with the map.
+    // Creates a styles array to use with the map.
     var styles = [{
         "featureType": "water",
         "elementType": "geometry",
@@ -198,9 +200,9 @@ function initMap() {
         mapTypeControl: false
     });
     var largeInfowindow = new google.maps.InfoWindow();
-    // Style the markers a bit. This will be our listing marker icon.
+    // this is styling the marker color
     var defaultIcon = makeMarkerIcon('525454');
-    // Create a "highlighted location" marker color for when the user
+    // this is a "highlighted location" marker color for when the user
     // mouses over the marker.
     var highlightedIcon = makeMarkerIcon('8bcc99');
     // The following group uses the location array to create an array of markers on initialize.
@@ -219,8 +221,11 @@ function initMap() {
         // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', function () {
             populateInfoWindow(this, largeInfowindow);
-            this.setAnimation(google.maps.Animation.BOUNCE);
-            stopAnimation(this);
+            // this makes sure that the marker is only animated after the ajax request is ok
+            if(isFoursquareReady) {
+                this.setAnimation(google.maps.Animation.BOUNCE);
+                stopAnimation(this);
+            }
         });
 
         // Two event listeners - one for mouseover, one for mouseout,
@@ -248,10 +253,8 @@ function stopAnimation(marker) {
 function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
-        // Clear the infowindow content to give the streetview time to load.
         infowindow.setContent('');
         infowindow.marker = marker;
-        // Make sure the marker property is cleared if the infowindow is closed.
         infowindow.addListener('closeclick', function () {
             infowindow.marker = null;
         });
@@ -278,21 +281,20 @@ function populateInfoWindow(marker, infowindow) {
                 $.ajax({
                     url: tipsUrl,
                     success: function (data) {
+                        isFoursquareReady = true;
                         var markerAddress = document.getElementById('address');
                         var tipsResponse = data.response.tips.items;
-                        console.log(tipsUrl);
                         clearTimeout(foursquareTipsRequestTimeout);
                         var content = '<div class="marker-title">' + marker.title + '</div><div id="address">' + venueAddress + '</div>';
-                        for (var index = 0; index < tipsResponse.length; index++) {
+                        for (var index = 0; index < 10; index++) {
                             var tipsText = tipsResponse[index].text;
-                            content += '<div>'+ tipsText + '</div>';
+                            content += '<div id="tips">"'+ tipsText + '"</div>';
                         }
                         infowindow.setContent(content);
                     }
                 })
             }
         });
-
         return false;
     };
     // Open the infowindow on the correct marker.
