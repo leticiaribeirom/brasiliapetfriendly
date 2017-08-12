@@ -221,11 +221,8 @@ function initMap() {
         // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', function () {
             populateInfoWindow(this, largeInfowindow);
-            // this makes sure that the marker is only animated after the ajax request is ok
-            if(isFoursquareReady) {
-                this.setAnimation(google.maps.Animation.BOUNCE);
-                stopAnimation(this);
-            }
+            this.setAnimation(google.maps.Animation.BOUNCE);
+            stopAnimation(this);
         });
 
         // Two event listeners - one for mouseover, one for mouseout,
@@ -274,7 +271,6 @@ function populateInfoWindow(marker, infowindow) {
             url: foursquareVenueUrl,
             success: function (result) {
                 var venueId = result.response.venues[0].id;
-                console.log(venueId);
                 var venueAddress = result.response.venues[0].location.address;
                 var tipsUrl = foursquareConfig.apiUrl + venueId + '/tips?sort=popular' + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20170101&m=foursquare';
                 clearTimeout(foursquareVenueRequestTimeout);
@@ -282,23 +278,21 @@ function populateInfoWindow(marker, infowindow) {
                     url: tipsUrl,
                     success: function (data) {
                         isFoursquareReady = true;
-                        var markerAddress = document.getElementById('address');
                         var tipsResponse = data.response.tips.items;
                         clearTimeout(foursquareTipsRequestTimeout);
                         var content = '<div class="marker-title">' + marker.title + '</div><div id="address">' + venueAddress + '</div>';
-                        for (var index = 0; index < 10; index++) {
+                        for (var index = 0; index < tipsResponse.length && index < 30; index++) {
                             var tipsText = tipsResponse[index].text;
-                            content += '<div id="tips">"'+ tipsText + '"</div>';
+                            content += '<div id="tips">"' + tipsText + '"</div>';
                         }
                         infowindow.setContent(content);
+                        infowindow.open(map, marker);
                     }
                 })
             }
         });
         return false;
-    };
-    // Open the infowindow on the correct marker.
-    infowindow.open(map, marker);
+    }
 }
 
 // This function will loop through the markers array and display them all.
