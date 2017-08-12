@@ -255,52 +255,41 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.addListener('closeclick', function () {
             infowindow.marker = null;
         });
-        var streetViewService = new google.maps.StreetViewService();
-        var radius = 50;
-        // In case the status is OK, which means the pano was found, compute the
-        // position of the streetview image, then calculate the heading, then get a
-        // panorama from that and set the options
-        function getStreetView(data, status) {
-            if (status == google.maps.StreetViewStatus.OK) {
-                var nearStreetViewLocation = data.location.latLng;
-                var heading = google.maps.geometry.spherical.computeHeading(
-                    nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-                var panoramaOptions = {
-                    position: nearStreetViewLocation,
-                    pov: {
-                        heading: heading,
-                        pitch: 30
-                    }
-                };
-                var panorama = new google.maps.StreetViewPanorama(
-                    document.getElementById('pano'), panoramaOptions);
-            } else {
-                infowindow.setContent('<div>' + marker.title + '</div>' +
-                    '<div>No Street View Found</div>');
-            }
-        }
-        // Use streetview service to get the closest streetview image within
-        // 50 meters of the markers position
-        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+        var foursquareVenueUrl = foursquareConfig.apiUrl + 'search?ll=' + marker.getPosition().lat() + ',' +
+            marker.getPosition().lng() + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20170101&m=foursquare';
 
-        var foursquareVenueUrl = foursquareConfig.apiUrl + 'search?ll=' + marker.getPosition().lat() + ',' 
-        + marker.getPosition().lng() + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20170101&m=foursquare';
         var foursquareVenueRequestTimeout = setTimeout(function () {
             infowindow.setContent('<div>' + marker.title + '</div>' +
-                    '<div>No Foursquare Venue Found</div>');
+                '<div>No Foursquare Venue Found</div>');
+        }, 8000);
+        var foursquareTipsRequestTimeout = setTimeout(function () {
+            infowindow.setContent('<div>' + marker.title + '</div>' +
+                '<div>No Foursquare Tips Found</div>');
         }, 8000);
 
         $.ajax({
             url: foursquareVenueUrl,
-            success: function (response) {
-                console.log('hi');
-                var venueId = response.venues[0].id;
-                var venueAddress = response.venues[0].location.address;
+            success: function (result) {
+                var venueId = result.response.venues[0].id;
+                console.log(venueId);
+                var venueAddress = result.response.venues[0].location.address;
+                var tipsUrl = foursquareConfig.apiUrl + venueId + '/tips?sort=popular' + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20170101&m=foursquare';
                 clearTimeout(foursquareVenueRequestTimeout);
-            },
-            error: function(response) {
-                console.log('erro');
+                $.ajax({
+                    url: tipsUrl,
+                    success: function (data) {
+                        var markerAddress = document.getElementById('address');
+                        var tipsResponse = data.response.tips.items;
+                        console.log(tipsUrl);
+                        clearTimeout(foursquareTipsRequestTimeout);
+                        var content = '<div class="marker-title">' + marker.title + '</div><div id="address">' + venueAddress + '</div>';
+                        for (var index = 0; index < tipsResponse.length; index++) {
+                            var tipsText = tipsResponse[index].text;
+                            content += '<div>'+ tipsText + '</div>';
+                        }
+                        infowindow.setContent(content);
+                    }
+                })
             }
         });
 
