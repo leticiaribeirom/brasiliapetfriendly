@@ -8,6 +8,8 @@ var foursquareConfig = {
 };
 
 var isFoursquareReady = false;
+var map;
+var markers = [];
 
 var LocationsModel = function () {
     this.locations = ko.observableArray([{
@@ -84,19 +86,23 @@ var ViewModel = function () {
     this.filter = ko.observable('');
 
     this.filterPlaces = ko.computed(function () {
+        for (var i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+            if (marker.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1) {
+                marker.setVisible(true);
+            } else {
+                marker.setVisible(false);
+            }
+        }
         return this.currentLocation().locations().filter(function (location) {
-            if (!self.filter() || location.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1)
+            if (!self.filter() || location.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1) {
                 return location;
+            }
         });
     }, this);
-
-}
+};
 
 ko.applyBindings(new ViewModel());
-
-var map;
-// Creates a new blank array for all the listing markers.
-var markers = [];
 
 function initMap() {
     // Creates a styles array to use with the map.
