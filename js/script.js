@@ -199,6 +199,11 @@ function initMap() {
         styles: styles,
         mapTypeControl: false
     });
+    google.maps.event.addDomListener(window, "resize", function () {
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center);
+    });
     var largeInfowindow = new google.maps.InfoWindow();
     // this is styling the marker color
     var defaultIcon = makeMarkerIcon('525454');
@@ -319,3 +324,17 @@ function makeMarkerIcon(markerColor) {
         new google.maps.Size(21, 34));
     return markerImage;
 }
+
+var isActive = false;
+
+$('.js-menu').on('click', function () {
+    if (isActive) {
+        $(this).removeClass('active');
+        $('body').removeClass('menu-open');
+    } else {
+        $(this).addClass('active');
+        $('body').addClass('menu-open');
+    }
+
+    isActive = !isActive;
+});
