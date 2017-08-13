@@ -205,11 +205,6 @@ function initMap() {
         styles: styles,
         mapTypeControl: false
     });
-    google.maps.event.addDomListener(window, "resize", function () {
-        var center = map.getCenter();
-        google.maps.event.trigger(map, "resize");
-        map.setCenter(center);
-    });
     var largeInfowindow = new google.maps.InfoWindow();
     // this is styling the marker color
     var defaultIcon = makeMarkerIcon('525454');
@@ -252,6 +247,10 @@ function initMap() {
     showListings();
 }
 
+function onMapError() {
+    alert("Error on requesting the map from Google Maps API. We apologize for the inconvenience");
+}
+
 function stopAnimation(marker) {
     setTimeout(function () {
         marker.setAnimation(null);
@@ -271,39 +270,35 @@ function populateInfoWindow(marker, infowindow) {
         var foursquareVenueUrl = foursquareConfig.apiUrl + 'search?ll=' + marker.getPosition().lat() + ',' +
             marker.getPosition().lng() + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20170101&m=foursquare';
 
-        var foursquareVenueRequestTimeout = setTimeout(function () {
-            infowindow.setContent('<div>' + marker.title + '</div>' +
-                '<div>No Foursquare Venue Found</div>');
-        }, 8000);
-        var foursquareTipsRequestTimeout = setTimeout(function () {
-            infowindow.setContent('<div>' + marker.title + '</div>' +
-                '<div>No Foursquare Tips Found</div>');
-        }, 8000);
-
         $.ajax({
             url: foursquareVenueUrl,
             success: function (result) {
                 var venueId = result.response.venues[0].id;
                 var venueAddress = result.response.venues[0].location.address;
                 var tipsUrl = foursquareConfig.apiUrl + venueId + '/tips?sort=popular' + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20170101&m=foursquare';
-                clearTimeout(foursquareVenueRequestTimeout);
                 $.ajax({
                     url: tipsUrl,
                     success: function (data) {
                         isFoursquareReady = true;
                         var tipsResponse = data.response.tips.items;
-                        clearTimeout(foursquareTipsRequestTimeout);
                         var content = '<div class="marker-title">' + marker.title + '</div><div id="address">' + venueAddress + '</div>';
                         for (var index = 0; index < tipsResponse.length && index < 30; index++) {
                             var tipsText = tipsResponse[index].text;
                             content += '<div id="tips">"' + tipsText + '"</div>';
                         }
                         infowindow.setContent(content);
-                        infowindow.open(map, marker);
+                    },
+                    error: function (result) {
+                        infowindow.setContent('<div class="marker-title">' + marker.title + '</div><div id="address">' + venueAddress + '</div><div>An error has occurred while requesting Foursquare Tips.</div>');
                     }
                 });
+            },
+            error: function (result) {
+                infowindow.setContent('<div>' + marker.title + '</div>' +
+                    '<div>An error has occurred while requesting Foursquare Venues.</div>');
             }
         });
+        infowindow.open(map, marker);
         return false;
     }
 }
@@ -316,7 +311,12 @@ function showListings() {
         markers[i].setMap(map);
         bounds.extend(markers[i].position);
     }
-    map.fitBounds(bounds);
+    google.maps.event.addDomListener(window, "resize", function () {
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center);
+        map.fitBounds(bounds);
+    });
 }
 
 // This function takes in a COLOR, and then creates a new marker
