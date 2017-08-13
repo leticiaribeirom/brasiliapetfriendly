@@ -1,6 +1,6 @@
-'use strict';
 
-var CLIENT_ID = 'OR2AOSJBF1TWD1XGBXKVJ5Y4E25JG4LMF12YM3NQYQ44EQZ0';
+   
+   var CLIENT_ID = 'OR2AOSJBF1TWD1XGBXKVJ5Y4E25JG4LMF12YM3NQYQ44EQZ0';
 var CLIENT_SECRET = 'YALRHHXRLZAUMAUV0O30NRSKKPMR20GWL0RO5OXGIXWSDNNA';
 
 var foursquareConfig = {
@@ -10,6 +10,8 @@ var foursquareConfig = {
 var isFoursquareReady = false;
 var map;
 var markers = [];
+var ko;
+var google;
 
 var LocationsModel = function () {
     this.locations = ko.observableArray([{
@@ -70,14 +72,14 @@ var LocationsModel = function () {
         }
     ]);
 
-}
+};
 
 var ViewModel = function () {
     var self = this;
 
     this.getIndex = function () {
         return this.index;
-    }
+    };
     this.currentLocation = ko.observable(new LocationsModel());
 
     this.setLocation = function (clickedLocation) {
@@ -218,6 +220,17 @@ function initMap() {
     var highlightedIcon = makeMarkerIcon('8bcc99');
     // The following group uses the location array to create an array of markers on initialize.
     var markerLocation = new LocationsModel();
+  	var onClickMarker = function () {
+      populateInfoWindow(this, largeInfowindow);
+      this.setAnimation(google.maps.Animation.BOUNCE);
+      stopAnimation(this);
+    };
+  	var onMouseOver = function () {
+            this.setIcon(highlightedIcon);
+        };
+  	var onMouseOut = function () {
+            this.setIcon(defaultIcon);
+        };
     for (var i = 0; i < markerLocation.locations().length; i++) {
         // Get the position from the location array.
         var position = markerLocation.locations()[i].location;
@@ -230,20 +243,11 @@ function initMap() {
             id: i
         });
         // Create an onclick event to open the large infowindow at each marker.
-        marker.addListener('click', function () {
-            populateInfoWindow(this, largeInfowindow);
-            this.setAnimation(google.maps.Animation.BOUNCE);
-            stopAnimation(this);
-        });
-
+        marker.addListener('click', onClickMarker);
         // Two event listeners - one for mouseover, one for mouseout,
         // to change the colors back and forth.
-        marker.addListener('mouseover', function () {
-            this.setIcon(highlightedIcon);
-        });
-        marker.addListener('mouseout', function () {
-            this.setIcon(defaultIcon);
-        });
+        marker.addListener('mouseover', onMouseOver);
+        marker.addListener('mouseout', onMouseOut);
 
         markers.push(marker);
     }
@@ -299,7 +303,7 @@ function populateInfoWindow(marker, infowindow) {
                         infowindow.setContent(content);
                         infowindow.open(map, marker);
                     }
-                })
+                });
             }
         });
         return false;
@@ -344,3 +348,5 @@ $('.js-menu').on('click', function () {
 
     isActive = !isActive;
 });
+
+
