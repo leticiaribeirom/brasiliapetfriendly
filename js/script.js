@@ -1,6 +1,4 @@
-
-   
-   var CLIENT_ID = 'OR2AOSJBF1TWD1XGBXKVJ5Y4E25JG4LMF12YM3NQYQ44EQZ0';
+var CLIENT_ID = 'OR2AOSJBF1TWD1XGBXKVJ5Y4E25JG4LMF12YM3NQYQ44EQZ0';
 var CLIENT_SECRET = 'YALRHHXRLZAUMAUV0O30NRSKKPMR20GWL0RO5OXGIXWSDNNA';
 
 var foursquareConfig = {
@@ -220,17 +218,17 @@ function initMap() {
     var highlightedIcon = makeMarkerIcon('8bcc99');
     // The following group uses the location array to create an array of markers on initialize.
     var markerLocation = new LocationsModel();
-  	var onClickMarker = function () {
-      populateInfoWindow(this, largeInfowindow);
-      this.setAnimation(google.maps.Animation.BOUNCE);
-      stopAnimation(this);
+    var onClickMarker = function () {
+        populateInfoWindow(this, largeInfowindow);
+        this.setAnimation(google.maps.Animation.BOUNCE);
+        stopAnimation(this);
     };
-  	var onMouseOver = function () {
-            this.setIcon(highlightedIcon);
-        };
-  	var onMouseOut = function () {
-            this.setIcon(defaultIcon);
-        };
+    var onMouseOver = function () {
+        this.setIcon(highlightedIcon);
+    };
+    var onMouseOut = function () {
+        this.setIcon(defaultIcon);
+    };
     for (var i = 0; i < markerLocation.locations().length; i++) {
         // Get the position from the location array.
         var position = markerLocation.locations()[i].location;
@@ -348,5 +346,3 @@ $('.js-menu').on('click', function () {
 
     isActive = !isActive;
 });
-
-
