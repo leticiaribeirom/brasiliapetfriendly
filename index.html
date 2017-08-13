@@ -21,7 +21,7 @@
       <label for="search-input">
           <i class="fa fa-search filter" aria-hidden="true"></i>
         </label>
-      <input id="search-input" type="filter" data-bind="textInput: filter" autocomplete="off">
+      <input id="search-input" type="text" data-bind="textInput: filter" autocomplete="off">
       <div data-bind="with: currentLocation()">
         <ul data-bind="foreach: $root.filterPlaces">
           <li data-bind="click: $root.setLocation">
@@ -36,9 +36,9 @@
   <script src="https://use.fontawesome.com/6d06bdb0ed.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src='js/knockout-3.4.2.js'></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh3qZV_EkF4Eh7AkkMvwbwI3wZjPZdjPk&v=3&callback=initMap">
-  </script>
   <script src="js/script.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh3qZV_EkF4Eh7AkkMvwbwI3wZjPZdjPk&v=3&callback=initMap" onerror="onMapError()">
+  </script>
 
 </body>
 
